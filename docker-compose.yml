@@ -2,24 +2,23 @@ version: "3.8"
 
 services:
   moltbot:
-    # O ponto (.) diz: "Use o Dockerfile que está na raiz deste repositório"
     build: .
-    
-    # Reinicia sempre que cair
     restart: always
     
-    # Volumes cruciais para não perder a configuração (login, tokens, memória)
+    # --- LINHA MÁGICA ADICIONADA ---
+    # Isso força o container a ficar ligado sem rodar o bot
+    command: tail -f /dev/null 
+    # -------------------------------
+    
     volumes:
-      # O Moltbot original salva configs na pasta do usuário root ou node.
-      # Mapeamos ambas por segurança ou verificamos o Dockerfile.
-      # Geralmente é /root/.clawdbot em builds Docker padrão.
-      - moltbot_config:/root/.clawdbot
+      - moltbot_config:/home/node/.clawdbot
+      - moltbot_root_config:/root/.clawdbot
+      - moltbot_sessions:/app/sessions
       
-    # Variáveis de ambiente
     environment:
       - NODE_ENV=production
-      # Se você já tiver as chaves, pode por aqui ou na aba Environment do Dokploy
-      # - OPENAI_API_KEY=sk-... 
-      
+
 volumes:
   moltbot_config:
+  moltbot_root_config:
+  moltbot_sessions:
